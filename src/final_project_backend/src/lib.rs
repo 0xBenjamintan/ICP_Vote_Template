@@ -7,20 +7,54 @@ type Memory = VirtualMemory<DefaultMemoryImpl>;
 
 const MAX_VALUE_SIZE: u32 = 5000;
 
-// impl Storable {
-//     fn to_bytes(&self) -> Cow<[u8]> {
-//         Cow::Owned(Encode!(self).unwrap())
-//     }
+#[derive(Debug, CandidType, Deserialize)]
+enum Choice {
+    Approve,
+    Reject,
+    Pass,
+}
 
-//     fn from_bytes(bytes: Cow<[u8]>) -> Self {
-//         Decode!(bytes.as_ref(), Self).unwrap()
-//     }
-// }
+#[derive(Debug, CandidType, Deserialize)]
+enum VoteError {
+    AlreadyVoted,
+    ProposalIsNotActive,
+    NoSuchProposal,
+    AccessRejected,
+    UpdateError
+}
 
-// impl BoundedStorable {
-//     const MAX_SIZE: u32 = MAX_VALUE_SIZE;
-//     const IS_FIXED_SIZE: bool = false;
-// }
+#[derive(Debug, CandidType, Deserialize)]
+struct Proposal {
+    description: String,
+    approve: u32,
+    reject: u32,
+    pass: u32,
+    is_active: bool,
+    voted: Vector<candid::Principal>,
+    owner: candid::Principal,
+}
+
+#[derive(Debug, CandidType, Deserialize)]
+struct CreateProposal {
+    description: String,
+    is_active: bool,
+
+}
+
+impl Storable for Proposal {
+    fn to_bytes(&self) -> Cow<[u8]> {
+        Cow::Owned(Encode!(self).unwrap())
+    }
+
+    fn from_bytes(bytes: Cow<[u8]>) -> Self {
+        Decode!(bytes.as_ref(), Self).unwrap()
+    }
+}
+
+impl BoundedStorable for Proposal {
+    const MAX_SIZE: u32 = MAX_VALUE_SIZE;
+    const IS_FIXED_SIZE: bool = false;
+}
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> = RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
