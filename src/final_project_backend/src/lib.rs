@@ -59,22 +59,25 @@ impl BoundedStorable for Proposal {
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> = RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
 
+    static PROPOSAL_MAP: RefCell<StableBTreeMap<u64,Proposal,Memory>> = RefCell::new(StableBTreeMap::init(MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(0)))));
 }
 
-// #[ic_cdk::query]
-// fn get_proposal(key: u64) -> Option<Proposal> {}
+#[ic_cdk::query]
+fn get_proposal(key: u64) -> Option<Proposal> {
+    PROPOSAL_MAP.with(|p| p.borrow().get(&key))
+}
 
-// #[ic_cdk::query]
-// fn get_proposal_count() -> u64 {}
+#[ic_cdk::query]
+fn get_proposal_count() -> u64 {}
 
-// #[ic_cdk::update]
-// fn create_proposal(key: u64, proposal: CreateProposal) -> Option<Proposal> {}
+#[ic_cdk::update]
+fn create_proposal(key: u64, proposal: CreateProposal) -> Option<Proposal> {}
 
-// #[ic_cdk::update]
-// fn edit_proposal(key: u64, proposal: CreateProposal) -> Result<(), VoteError> {}
+#[ic_cdk::update]
+fn edit_proposal(key: u64, proposal: CreateProposal) -> Result<(), VoteError> {}
 
-// #[ic_cdk::update]
-// fn end_proposal(key: u64) -> Result<(), VoteError> {}
+#[ic_cdk::update]
+fn end_proposal(key: u64) -> Result<(), VoteError> {}
 
-// #[ic_cdk::update]
-// fn vote(key: u64, choice: Choice) -> Result<(), VoteError> {}
+#[ic_cdk::update]
+fn vote(key: u64, choice: Choice) -> Result<(), VoteError> {}
