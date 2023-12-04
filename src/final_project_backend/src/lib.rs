@@ -95,7 +95,7 @@ fn edit_proposal(key: u64, proposal: CreateProposal) -> Result<(), VoteError> {
         let old_proposal:Proposal;
 
         match old_proposal_opt {
-            Some(value: Proposal) => old_proposal = value,
+            Some(value) => old_proposal = value,
             None => return Err(VoteError::NoSuchProposal),
         }
 
@@ -130,7 +130,7 @@ fn end_proposal(key: u64) -> Result<(), VoteError> {
         let mut old_proposal:Proposal;
 
         match old_proposal_opt {
-            Some(value: Proposal) => old_proposal = value,
+            Some(value) => old_proposal = value,
             None => return Err(VoteError::NoSuchProposal),
         }
 
@@ -157,7 +157,7 @@ fn vote(key: u64, choice: Choice) -> Result<(), VoteError> {
         let mut proposal:Proposal;
 
         match proposal_opt {
-            Some(value: Proposal) => proposal = value,
+            Some(value) => proposal = value,
             None => return Err(VoteError::NoSuchProposal),
         }
 
