@@ -30,7 +30,7 @@ struct Proposal {
     reject: u32,
     pass: u32,
     is_active: bool,
-    voted: Vector<candid::Principal>,
+    voted: Vec<candid::Principal>,
     owner: candid::Principal,
 }
 
@@ -89,7 +89,7 @@ fn create_proposal(key: u64, proposal: CreateProposal) -> Option<Proposal> {
 #[ic_cdk::update]
 fn edit_proposal(key: u64, proposal: CreateProposal) -> Result<(), VoteError> {
     PROPOSAL_MAP.with(|p| {
-        let old_proposal_opt = p.borrow().get(key);
+        let old_proposal_opt = p.borrow().get(&key);
         let old_proposal: Proposal;
 
         match old_proposal_opt {
@@ -123,7 +123,7 @@ fn edit_proposal(key: u64, proposal: CreateProposal) -> Result<(), VoteError> {
 #[ic_cdk::update]
 fn end_proposal(key: u64) -> Result<(), VoteError> {
     PROPOSAL_MAP.with(|p| {
-        let old_proposal_opt = p.borrow().get(key);
+        let old_proposal_opt = p.borrow().get(&key);
         let mut old_proposal: Proposal;
 
         match old_proposal_opt {
@@ -149,7 +149,7 @@ fn end_proposal(key: u64) -> Result<(), VoteError> {
 #[ic_cdk::update]
 fn vote(key: u64, choice: Choice) -> Result<(), VoteError> {
     PROPOSAL_MAP.with(|p| {
-        let proposal_opt = p.borrow().get(key);
+        let proposal_opt = p.borrow().get(&key);
         let mut proposal: Proposal;
 
         match proposal_opt {
@@ -157,7 +157,7 @@ fn vote(key: u64, choice: Choice) -> Result<(), VoteError> {
             None => return Err(VoteError::NoSuchProposal),
         }
 
-        let caller: Principal = ic_cdk.caller();
+        let caller = ic_cdk::caller();
 
         if proposal.voted.contains(&caller) {
             return Err(VoteError::AlreadyVoted);
